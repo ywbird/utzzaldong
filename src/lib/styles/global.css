@@ -1,0 +1,25 @@
+img {
+    border-radius: var(--round-border, 0);
+    max-width: 100%;
+}
+strong {
+    font-weight: 700;
+}
+
+.icon {
+    width: 1.1rem;
+    fill: #787878;
+}
+
+p {
+    margin-block: 0.3rem;
+}
+
+img:not([init='true']) {
+    filter: blur();
+}
+
+:root {
+    --picker-height: 100px;
+    --focus-color: blue;
+}
