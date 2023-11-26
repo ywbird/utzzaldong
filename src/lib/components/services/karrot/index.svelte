@@ -1,12 +1,16 @@
 <script lang="ts">
-    import markdown from '$lib/markdown';
     import { newAvatar } from '$lib/utils';
+    import { exportAsImage } from '$lib/exporting';
     import Icon from '$lib/icons';
+    import InfoPopup from '$lib/components/utils/infoPopup.svelte';
+    import markdown from '$lib/markdown';
 
     import { colord } from 'colord';
     import ColorPicker from 'svelte-awesome-color-picker';
-    import { exportAsImage } from '$lib/exporting';
-    import Page from '../../../../routes/+page.svelte';
+
+    const infoText = `\`*별표*\`로 *기울기*를,
+    \`**별표 두번**\`으로 **볼드**를,
+    ![](이미지 url)로 이미지를 넣을 수 있습니다.`;
 
     let data = {
         title: '아무 제목',
@@ -191,7 +195,13 @@
                 </div>
             </div>
         </div>
+        <span>
+            <a href="https://www.markdownguide.org/basic-syntax/"
+                >Markdown을 지원합니다. Supports GFM markdown</a
+            ><InfoPopup content={infoText} />
+        </span>
     </div>
+
     <div style="--width: {width}px;" class="section">
         <h2>Content</h2>
         <div
