@@ -15,11 +15,19 @@
             </li>
         </a>
     </ul>
+
+    <p>
+        <a href="http://www.youtube.com/@utzzaldong" target="_blank">웃짤동</a> 생성기. <br />
+        누구나 쉽게 만들 수 있는 유머 짤 생성기입니다. <br />
+        Created by <a href="https://github.com/ywbird" target="_blank">ywbird</a>, Origin by
+        <a href="http://www.youtube.com/@utzzaldong" target="_blank">@utzzaldong</a>
+    </p>
 </main>
 
 <style lang="scss">
     main {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
     }

@@ -31,3 +31,14 @@ body {
     align-items: center;
     overflow: scroll;
 }
+
+a {
+    color: blueviolet;
+    text-decoration: none;
+}
+a:visited {
+    color: blueviolet;
+}
+a:hover {
+    text-decoration: underline;
+}
