@@ -56,7 +56,7 @@
     }
 
     function heroError(this: any) {
-        this.src = '/500x500.svg';
+        this.src = `https://placehold.co/${width}x${width}`;
     }
 </script>
 
@@ -211,7 +211,7 @@
             <div bind:this={target} class="target" id="target">
                 <img
                     class="hero"
-                    src={data.image.length ? data.image : '/500x500.svg'}
+                    src={data.image.length ? data.image : `https://placehold.co/${width}x${width}`}
                     alt={data.image}
                     on:error={heroError}
                 />
