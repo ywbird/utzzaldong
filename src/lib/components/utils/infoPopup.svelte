@@ -1,6 +1,6 @@
 <script lang="ts">
     export let content: string;
-    import { Utils } from '$lib/icons';
+    import Icon from '$lib/icons';
 
     import markdown from '$lib/markdown';
 
@@ -8,7 +8,7 @@
 </script>
 
 <div class="popup">
-    <span class="button"><Utils.Info /></span>
+    <span class="button"><Icon.Utils.Info /></span>
     <div class="content">
         {#await processdContent}
             <p>converting...</p>

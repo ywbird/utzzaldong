@@ -23,3 +23,11 @@ img:not([init='true']) {
     --picker-height: 100px;
     --focus-color: blue;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: scroll;
+}

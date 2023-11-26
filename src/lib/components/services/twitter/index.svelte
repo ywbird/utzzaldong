@@ -1,13 +1,13 @@
 <script lang="ts">
     import markdown from '$lib/markdown';
-    import { Twitter } from '$lib/icons';
-    import { Utils } from '$lib/icons';
-    import TwitterComment from './twitterComment.svelte';
+    import Icon from '$lib/icons';
+    import TwitterComment from '$lib/components/services/twitter/twitterComment.svelte';
 
-    import domtoimage from 'dom-to-image';
     import ColorPicker from 'svelte-awesome-color-picker';
     import { colord } from 'colord';
-    import InfoPopup from './utils/infoPopup.svelte';
+    import InfoPopup from '$lib/components/utils/infoPopup.svelte';
+    import { exportAsImage } from '$lib/exporting';
+    import { newAvatar } from '$lib/utils';
 
     const infoText = `\`*별표*\`로 *기울기*를,
     \`**별표 두번**\`으로 **볼드**를,
@@ -22,7 +22,16 @@
     let exportScale = 2;
     let date = new Date();
 
-    let data = {
+    let data: {
+        comments: {
+            nickname: string;
+            handle: string;
+            avatar: string;
+            content: string;
+            date: string;
+        }[];
+        [key: string]: any;
+    } = {
         avatar: newAvatar(),
         nickname: '아무닉네임',
         handle: 'amu_id',
@@ -33,7 +42,8 @@
             date.getDate()
         ).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(
             date.getMinutes()
-        ).padStart(2, '0')}`
+        ).padStart(2, '0')}`,
+        comments: []
     };
 
     $: date = new Date(data.time);
@@ -52,90 +62,23 @@
 
     let comment = defaultComment();
 
-    let comments: {
-        nickname: string;
-        handle: string;
-        avatar: string;
-        content: string;
-        date: string;
-    }[] = [];
-
     function addComment() {
-        const newComment = structuredClone(comment);
-        const tempComments = structuredClone(comments);
+        const newComment = structuredClone(data.comment);
+        const tempComments = structuredClone(data.comments);
         tempComments.push(newComment);
-        comments = tempComments;
+        data.comments = tempComments;
         comment = defaultComment();
     }
 
     function removeComment(idx: number) {
-        const tempComments = structuredClone(comments);
+        const tempComments = structuredClone(data.comments);
         tempComments.splice(idx, 1);
-        comments = tempComments;
+        data.comments = tempComments;
     }
 
     function moveComment(idx: number, to: number) {
-        const tempComments = structuredClone(comments);
-        comments = moveItem(tempComments, idx, to);
-    }
-
-    function exportAsImage() {
-        // const resultElement = document.createElement('div');
-        // resultElement.innerHTML = result.innerHTML;
-        // const imgs = result.querySelectorAll('img');
-        // imgs.forEach((img) => {
-        //     getBase64FromImageUrl(img, img.src);
-        // });
-        // console.log(result);
-        // // result.innerHTML = resultElement.innerHTML;
-        // setTimeout(() => {
-        //     html2canvas(result, {
-        //         scale: exportScale || 4,
-        //         backgroundColor: exportTransparentBG ? null : '#ffffff'
-        //     }).then((canvas) => {
-        //         const a = document?.createElement('a');
-        //         a.setAttribute('download', `humor-${yyyymmdd(date)}.png`);
-        //         a.setAttribute(
-        //             'href',
-        //             canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
-        //         );
-        //         a.click();
-        //     });
-        // }, 30);
-        // const clonedResult = result.cloneNode(true);
-        // target.style.transform = 'scale(3)';
-        // function filter(node: Node) {
-        //     return node.tagName !== 'i';
-        // }
-        // domtoimage
-        //     .toSvg(document.getElementById('target'), { filter: filter })
-        //     .then(function (dataUrl) {
-        //         downloadDataUrl(dataUrl);
-        //     })
-        //     .catch(function (error) {
-        //         console.error('oops, something went wrong!', error);
-        //     });
-        domtoimage
-            .toPng(document.getElementById('target'), {
-                bgcolor: exportTransparentBG ? 'rgba(0,0,0,0)' : bgColor.toHex(),
-                width: target.clientWidth * exportScale,
-                height: target.clientHeight * exportScale,
-                style: {
-                    transform: 'scale(' + exportScale + ')',
-                    transformOrigin: 'top left'
-                }
-            })
-            .then(function (dataUrl) {
-                downloadDataUrl(dataUrl);
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
-            });
-    }
-
-    function newAvatar(seed?: string) {
-        // `https://api.dicebear.com/6.x/identicon/png?seed=${Math.random()}`
-        return '/avatar.webp';
+        const tempComments = structuredClone(data.comments);
+        data.comments = moveItem(tempComments, idx, to);
     }
 
     function rerollAvatar() {
@@ -147,30 +90,8 @@
         bgHex = '#00b140';
     }
 
-    // function getBase64FromImageUrl(img: HTMLImageElement, url: string) {
-    //     img.setAttribute('crossOrigin', 'anonymous');
-
-    //     img.addEventListener('load', (e) => {
-    //         var canvas = document.createElement('canvas');
-    //         canvas.width = (e.target as HTMLImageElement).width;
-    //         canvas.height = (e.target as HTMLImageElement).height;
-
-    //         var ctx = canvas.getContext('2d');
-    //         ctx.drawImage(e.target as CanvasImageSource, 0, 0);
-
-    //         var dataURL = canvas.toDataURL('image/png');
-
-    //         (e.target as HTMLImageElement).setAttribute('src', dataURL);
-    //     });
-
-    //     img.src = url;
-    // }
-
-    function downloadDataUrl(dataUrl: string) {
-        const a = document?.createElement('a');
-        a.setAttribute('download', `humor-${yyyymmdd(date)}.png`);
-        a.setAttribute('href', dataUrl);
-        a.click();
+    function exportImage() {
+        exportAsImage(exportTransparentBG, bgColor, target, exportScale);
     }
 
     function moveItem(arr: any[], from: number, to: number) {
@@ -178,26 +99,9 @@
         arr.splice(to, 0, f);
         return arr;
     }
-
-    function yyyymmdd(d: Date) {
-        const mm = d.getMonth() + 1; // getMonth() is zero-based
-        const dd = d.getDate();
-        const hh = d.getHours();
-        const min = d.getMinutes();
-        const sec = d.getSeconds();
-
-        return [
-            d.getFullYear(),
-            (mm > 9 ? '' : '0') + mm,
-            (dd > 9 ? '' : '0') + dd,
-            (hh > 9 ? '' : '0') + hh,
-            (min > 9 ? '' : '0') + min,
-            (sec > 9 ? '' : '0') + sec
-        ].join('');
-    }
 </script>
 
-<!-- {#if $editMode} -->
+<h1>Twitter(X)</h1>
 <main>
     <div class="section">
         <h2>Edit</h2>
@@ -338,7 +242,7 @@
 
                 <div class="comment-previews">
                     <ul>
-                        {#each comments as c, idx}
+                        {#each data.comments as c, idx}
                             <li>
                                 <p>
                                     <button
@@ -353,7 +257,7 @@
                                         }}>↑</button
                                     >
                                     <button
-                                        disabled={idx === comments.length - 1}
+                                        disabled={idx === data.comments.length - 1}
                                         on:click={() => {
                                             moveComment(idx, idx + 1);
                                         }}>↓</button
@@ -377,7 +281,6 @@
         </span>
     </div>
 
-    <!-- {:else} -->
     <div style="--width: {width}px;" class="section">
         <h2>Content</h2>
         <div
@@ -421,13 +324,13 @@
                         }).format(date)}
                     </div>
                     <div class="icons">
-                        <Twitter.Comment />
-                        <Twitter.Retweet />
-                        <Twitter.Like />
-                        <Twitter.Share />
+                        <Icon.Twitter.Comment />
+                        <Icon.Twitter.Retweet />
+                        <Icon.Twitter.Like />
+                        <Icon.Twitter.Share />
                     </div>
                     <div class="comments">
-                        {#each comments as c}
+                        {#each data.comments as c}
                             <TwitterComment data={c} />
                         {/each}
                     </div>
@@ -477,7 +380,7 @@
                     >
                 </p>
             </div>
-            <button on:click={exportAsImage}>내보내기</button>
+            <button on:click={exportImage}>내보내기</button>
         </div>
     </div>
 </main>

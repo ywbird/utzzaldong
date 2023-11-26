@@ -1,16 +1,31 @@
-import Comment from './conponents/icons/twitter/comment.svelte';
-import Retweet from './conponents/icons/twitter/retweet.svelte';
-import Like from './conponents/icons/twitter/like.svelte';
-import Share from './conponents/icons/twitter/share.svelte';
-import Info from './conponents/icons/utils/info.svelte';
+import Comment from './components/icons/twitter/comment.svelte';
+import Retweet from './components/icons/twitter/retweet.svelte';
+import Like from './components/icons/twitter/like.svelte';
+import Share from './components/icons/twitter/share.svelte';
+import Info from './components/icons/utils/info.svelte';
+import Heart from './components/icons/karrot/heart.svelte';
+import TwitterIcon from './components/icons/twitter.svelte';
+import Home from './components/icons/utils/home.svelte';
 
-export const Twitter = {
+const Twitter = {
     Comment,
     Retweet,
     Like,
-    Share
+    Share,
+    TwitterIcon
 };
 
-export const Utils = {
-    Info
+const Karrot = {
+    Heart
+};
+
+const Utils = {
+    Info,
+    Home
+};
+
+export default {
+    Twitter,
+    Karrot,
+    Utils
 };

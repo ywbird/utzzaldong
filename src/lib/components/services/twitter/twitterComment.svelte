@@ -6,7 +6,7 @@
         content: string;
         date: string;
     };
-    import { Twitter } from '$lib/icons';
+    import Icon from '$lib/icons';
     import markdown from '$lib/markdown';
 
     const date = new Date(data.date);
@@ -41,10 +41,10 @@
         </div>
     </div>
     <div class="icons">
-        <Twitter.Comment size={16} />
-        <Twitter.Retweet size={16} />
-        <Twitter.Like size={16} />
-        <Twitter.Share size={16} />
+        <Icon.Twitter.Comment size={16} />
+        <Icon.Twitter.Retweet size={16} />
+        <Icon.Twitter.Like size={16} />
+        <Icon.Twitter.Share size={16} />
     </div>
 </div>
 
