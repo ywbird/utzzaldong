@@ -1,10 +1,10 @@
 <script lang="ts">
-    export let content: string;
-    import Icon from '$lib/icons';
+    export let content: string
+    import Icon from '$lib/icons'
 
-    import markdown from '$lib/markdown';
+    import markdown from '$lib/markdown'
 
-    $: processdContent = markdown(content) || '';
+    $: processdContent = markdown(content) || ''
 </script>
 
 <div class="popup">

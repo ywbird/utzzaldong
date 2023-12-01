@@ -1,22 +1,23 @@
 <script lang="ts">
-    import { newAvatar } from '$lib/utils';
-    import { exportAsImage } from '$lib/exporting';
-    import Icon from '$lib/icons';
-    import InfoPopup from '$lib/components/utils/infoPopup.svelte';
-    import markdown from '$lib/markdown';
+    import { newAvatar, newName } from '$lib/utils'
+    import { exportAsImage } from '$lib/exporting'
+    import Icon from '$lib/icons'
+    import InfoPopup from '$lib/components/utils/InfoPopup.svelte'
+    import markdown from '$lib/markdown'
 
-    import { colord } from 'colord';
-    import ColorPicker from 'svelte-awesome-color-picker';
+    import { colord } from 'colord'
+    import ExportInput from '$lib/components/utils/ExportInput.svelte'
 
     const infoText = `\`*별표*\`로 *기울기*를,
     \`**별표 두번**\`으로 **볼드**를,
-    ![](이미지 url)로 이미지를 넣을 수 있습니다.`;
+    ![](이미지 url)로 이미지를 넣을 수 있습니다.`
 
     let data = {
-        title: '아무 제목',
-        nickname: '아무닉네임',
+        service: 'karrot',
+        title: '아무거나 팝니다',
+        nickname: newName(),
         avatar: newAvatar(),
-        location: '서울시 유투구 웃짤동',
+        location: '아무장소',
         interest: 1,
         views: 10,
         temperature: 36.5,
@@ -24,39 +25,46 @@
         timePassed: '1시간',
         content: '아무내용',
         price: 3000,
-        image: ''
-    };
+        image: '',
+    }
 
-    let target: HTMLElement;
+    let target: HTMLElement
 
-    let exportTransparentBG = false;
-    let bgColor = colord('#ffffffff');
-    let bgHex = '#ffffffff';
-    let width = 400;
-    let exportScale = 2;
+    let exportTransparentBG = false
+    let bgColor = colord('#ffffffff')
+    let bgHex = '#ffffffff'
+    let width = 400
+    let exportScale = 2
 
-    $: processdContent = markdown(data.content) || '';
+    $: processdContent = markdown(data.content) || ''
 
     function getRankByTemp(temp: number) {
-        if (temp < 30) return 'rank6';
-        if (30 <= temp && temp < 36.5) return 'rank5';
-        if (36.5 <= temp && temp < 50.5) return 'rank4';
-        if (50.5 <= temp && temp < 65.5) return 'rank3';
-        if (65.5 <= temp && temp < 88) return 'rank2';
-        if (88 <= temp) return 'rank1';
+        if (temp < 30) return 'rank6'
+        if (30 <= temp && temp < 36.5) return 'rank5'
+        if (36.5 <= temp && temp < 50.5) return 'rank4'
+        if (50.5 <= temp && temp < 65.5) return 'rank3'
+        if (65.5 <= temp && temp < 88) return 'rank2'
+        if (88 <= temp) return 'rank1'
     }
 
     function setGreenScreen() {
-        bgColor = colord('#00b140');
-        bgHex = '#00b140';
+        bgColor = colord('#00b140')
+        bgHex = '#00b140'
     }
 
     function exportImage() {
-        exportAsImage(exportTransparentBG, bgColor, target, exportScale);
+        exportAsImage(exportTransparentBG, bgColor, target, exportScale)
     }
 
     function heroError(this: any) {
-        this.src = `https://placehold.co/${width}x${width}`;
+        this.src = `https://placehold.co/${width}x${width}`
+    }
+
+    function rerollAvatar() {
+        data.avatar = newAvatar()
+    }
+    function rerollName() {
+        data.nickname = newName()
     }
 </script>
 
@@ -85,6 +93,7 @@
                         placeholder="닉네임"
                         bind:value={data.nickname}
                     />
+                    <button class="btn" on:click={rerollName}>🎲</button>
                 </p>
                 <p>
                     <label for="avatar">프사</label>
@@ -95,6 +104,7 @@
                         placeholder="프사"
                         bind:value={data.avatar}
                     />
+                    <button class="btn" on:click={rerollAvatar}>🎲</button>
                 </p>
                 <p>
                     <label for="location">위치</label>
@@ -262,51 +272,17 @@
                 </div>
             </div>
         </div>
-        <div class="export">
-            <div class="inputs">
-                <p>
-                    <label for="width">너비</label>
-                    <input
-                        type="number"
-                        name="width"
-                        id="width"
-                        step="10"
-                        placeholder="기본 400"
-                        bind:value={width}
-                    />
-                </p>
-                <p>
-                    <label for="width">확대</label>
-                    <input
-                        type="number"
-                        name="scale"
-                        id="scale"
-                        placeholder="기본 1"
-                        bind:value={exportScale}
-                    />
-                </p>
-                <p>
-                    <label for="bg-color">배경색</label>
-                    <ColorPicker bind:color={bgColor} bind:hex={bgHex} isAlpha={false} />
-                </p>
-                <p>
-                    <label for="transparent-bg">투명 배경</label>
-                    <input
-                        type="checkbox"
-                        name="transparent-bg"
-                        id="transparent-bg"
-                        bind:checked={exportTransparentBG}
-                    />
-                </p>
-                <p>
-                    <label for="greenscreen">그린스크린</label>
-                    <button name="greenscreen" id="greenscreen" on:click={setGreenScreen}
-                        >설정하기 <div id="greenscreen-color" /></button
-                    >
-                </p>
-            </div>
-            <button on:click={exportImage}>내보내기</button>
-        </div>
+        <ExportInput
+            bind:bgColor
+            bind:bgHex
+            bind:exportScale
+            bind:exportTransparentBG
+            bind:width
+            bind:data
+            service="karrot"
+            {exportImage}
+            {setGreenScreen}
+        />
     </div>
 </main>
 
@@ -473,17 +449,6 @@
         }
         input {
             display: table-cell;
-        }
-
-        button#greenscreen {
-            display: flex;
-            flex-direction: row;
-            align-items: baseline;
-        }
-        #greenscreen-color {
-            width: 12px;
-            height: 12px;
-            background-color: #00b140;
         }
     }
 </style>

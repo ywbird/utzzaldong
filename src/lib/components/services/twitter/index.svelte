@@ -1,103 +1,118 @@
 <script lang="ts">
-    import markdown from '$lib/markdown';
-    import Icon from '$lib/icons';
-    import TwitterComment from '$lib/components/services/twitter/twitterComment.svelte';
+    import markdown from '$lib/markdown'
+    import Icon from '$lib/icons'
+    import TwitterComment from '$lib/components/services/twitter/TwitterComment.svelte'
 
-    import ColorPicker from 'svelte-awesome-color-picker';
-    import { colord } from 'colord';
-    import InfoPopup from '$lib/components/utils/infoPopup.svelte';
-    import { exportAsImage } from '$lib/exporting';
-    import { newAvatar } from '$lib/utils';
+    import { colord } from 'colord'
+    import InfoPopup from '$lib/components/utils/InfoPopup.svelte'
+    import { exportAsImage } from '$lib/exporting'
+    import { newAvatar, newName } from '$lib/utils'
+    import ExportInput from '$lib/components/utils/ExportInput.svelte'
 
     const infoText = `\`*별표*\`로 *기울기*를,
     \`**별표 두번**\`으로 **볼드**를,
-    ![](이미지 url)로 이미지를 넣을 수 있습니다.`;
+    ![](이미지 url)로 이미지를 넣을 수 있습니다.`
 
-    let target: HTMLElement;
+    let target: HTMLElement
 
-    let exportTransparentBG = false;
-    let bgColor = colord('#ffffffff');
-    let bgHex = '#ffffffff';
-    let width = 400;
-    let exportScale = 2;
-    let date = new Date();
+    let exportTransparentBG = false
+    let bgColor = colord('#ffffffff')
+    let bgHex = '#ffffffff'
+    let width = 400
+    let exportScale = 2
+    let date = new Date()
 
     let data: {
         comments: {
-            nickname: string;
-            handle: string;
-            avatar: string;
-            content: string;
-            date: string;
-        }[];
-        [key: string]: any;
+            nickname: string
+            handle: string
+            avatar: string
+            content: string
+            date: string
+        }[]
+        [key: string]: any
     } = {
+        service: 'twitter',
         avatar: newAvatar(),
-        nickname: '아무닉네임',
+        nickname: newName(),
         handle: 'amu_id',
         content: '아무내용',
         fontSize: 16,
-        roundBorder: false,
         time: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-            date.getDate()
+            date.getDate(),
         ).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(
-            date.getMinutes()
+            date.getMinutes(),
         ).padStart(2, '0')}`,
-        comments: []
-    };
+        comments: [],
+    }
 
-    $: date = new Date(data.time);
+    $: date = new Date(data.time)
 
-    $: processdContent = markdown(data.content) || '';
+    $: processdContent = markdown(data.content) || ''
 
     function defaultComment() {
         return {
-            nickname: '아무댓글닉네임',
+            nickname: newName(),
             handle: 'amu_id',
             avatar: newAvatar(),
-            content: '아무댓글',
-            date: '2023-08-19'
-        };
+            content: '',
+            date: '2023-08-19',
+        }
     }
 
-    let comment = defaultComment();
+    let comment = {
+        nickname: newName(),
+        handle: 'amu_id',
+        avatar: newAvatar(),
+        content: '아무댓글',
+        date: '2023-08-19',
+    }
 
     function addComment() {
-        const newComment = structuredClone(data.comment);
-        const tempComments = structuredClone(data.comments);
-        tempComments.push(newComment);
-        data.comments = tempComments;
-        comment = defaultComment();
+        const newComment = structuredClone(comment)
+        const tempComments = structuredClone(data.comments)
+        tempComments.push(newComment)
+        data.comments = tempComments
+        comment = defaultComment()
     }
 
     function removeComment(idx: number) {
-        const tempComments = structuredClone(data.comments);
-        tempComments.splice(idx, 1);
-        data.comments = tempComments;
+        const tempComments = structuredClone(data.comments)
+        tempComments.splice(idx, 1)
+        data.comments = tempComments
     }
 
     function moveComment(idx: number, to: number) {
-        const tempComments = structuredClone(data.comments);
-        data.comments = moveItem(tempComments, idx, to);
+        const tempComments = structuredClone(data.comments)
+        data.comments = moveItem(tempComments, idx, to)
     }
 
     function rerollAvatar() {
-        data.avatar = newAvatar();
+        data.avatar = newAvatar()
+    }
+    function rerollName() {
+        data.nickname = newName()
+    }
+    function rerollCommentAvatar() {
+        comment.avatar = newAvatar()
+    }
+    function rerollCommentName() {
+        comment.nickname = newName()
     }
 
     function setGreenScreen() {
-        bgColor = colord('#00b140');
-        bgHex = '#00b140';
+        bgColor = colord('#00b140')
+        bgHex = '#00b140'
     }
 
     function exportImage() {
-        exportAsImage(exportTransparentBG, bgColor, target, exportScale);
+        exportAsImage(exportTransparentBG, bgColor, target, exportScale)
     }
 
     function moveItem(arr: any[], from: number, to: number) {
-        var f = arr.splice(from, 1)[0];
-        arr.splice(to, 0, f);
-        return arr;
+        var f = arr.splice(from, 1)[0]
+        arr.splice(to, 0, f)
+        return arr
     }
 </script>
 
@@ -117,6 +132,7 @@
                         placeholder="닉네임"
                         bind:value={data.nickname}
                     />
+                    <button class="btn" on:click={rerollName}>🎲</button>
                 </p>
                 <p>
                     <label for="handle">아이디</label>
@@ -171,21 +187,11 @@
                             bind:value={data.fontSize}
                         />
                     </p>
-                    <p>
-                        <label for="roundcorner">둥근 사진 모서리</label>
-                        <input
-                            type="checkbox"
-                            name="roundcorner"
-                            id="roundcorner"
-                            bind:checked={data.roundBorder}
-                        />
-                    </p>
                 </div>
             </div>
-            <br />
+            <hr />
+            <h3>댓글</h3>
             <div class="comment-edit">
-                <h3>댓글</h3>
-
                 <div class="inputs">
                     <p>
                         <label for="nickname">닉네임</label>
@@ -196,6 +202,7 @@
                             placeholder="닉네임"
                             bind:value={comment.nickname}
                         />
+                        <button class="btn" on:click={rerollCommentName}>🎲</button>
                     </p>
                     <p>
                         <label for="handle">아이디</label>
@@ -216,6 +223,7 @@
                             placeholder="이미지 url"
                             bind:value={comment.avatar}
                         />
+                        <button class="btn" on:click={rerollCommentAvatar}>🎲</button>
                     </p>
                     <p>
                         <label for="time">시간</label>
@@ -247,23 +255,26 @@
                                 <p>
                                     <button
                                         on:click={() => {
-                                            removeComment(idx);
+                                            removeComment(idx)
                                         }}>x</button
                                     >
                                     <button
                                         disabled={idx === 0}
                                         on:click={() => {
-                                            moveComment(idx, idx - 1);
+                                            moveComment(idx, idx - 1)
                                         }}>↑</button
                                     >
                                     <button
                                         disabled={idx === data.comments.length - 1}
                                         on:click={() => {
-                                            moveComment(idx, idx + 1);
+                                            moveComment(idx, idx + 1)
                                         }}>↓</button
                                     >
                                     <span>
-                                        {c.nickname}·{c.content.slice(0, 15)}{c.content.length > 16
+                                        {c.nickname.length
+                                            ? c.nickname
+                                            : '닉네임'}·{c.content.slice(0, 13)}{c.content.length >
+                                        14
                                             ? '...'
                                             : ''}
                                     </span>
@@ -300,12 +311,7 @@
                         <div class="handle">@{data.handle || 'handle'}</div>
                     </div>
                 </div>
-                <div
-                    style={`--font-size:${data.fontSize || 16}px; --round-border:${
-                        data.roundBorder ? '15px' : '0'
-                    }`}
-                    class="content"
-                >
+                <div style={`--font-size:${data.fontSize || 16}px;`} class="content">
                     {#await processdContent}
                         <p>converting...</p>
                     {:then result}
@@ -316,11 +322,11 @@
                     <div class="date">
                         {new Intl.DateTimeFormat('ko-KR', {
                             hour: 'numeric',
-                            minute: 'numeric'
+                            minute: 'numeric',
                         }).format(date)}·{new Intl.DateTimeFormat('ko-KR', {
                             year: 'numeric',
                             month: 'long',
-                            day: 'numeric'
+                            day: 'numeric',
                         }).format(date)}
                     </div>
                     <div class="icons">
@@ -337,51 +343,17 @@
                 </div>
             </div>
         </div>
-        <div class="export">
-            <div class="inputs">
-                <p>
-                    <label for="width">너비</label>
-                    <input
-                        type="number"
-                        name="width"
-                        id="width"
-                        step="10"
-                        placeholder="기본 400"
-                        bind:value={width}
-                    />
-                </p>
-                <p>
-                    <label for="width">확대</label>
-                    <input
-                        type="number"
-                        name="scale"
-                        id="scale"
-                        placeholder="기본 1"
-                        bind:value={exportScale}
-                    />
-                </p>
-                <p>
-                    <label for="bg-color">배경색</label>
-                    <ColorPicker bind:color={bgColor} bind:hex={bgHex} isAlpha={false} />
-                </p>
-                <p>
-                    <label for="transparent-bg">투명 배경</label>
-                    <input
-                        type="checkbox"
-                        name="transparent-bg"
-                        id="transparent-bg"
-                        bind:checked={exportTransparentBG}
-                    />
-                </p>
-                <p>
-                    <label for="greenscreen">그린스크린</label>
-                    <button name="greenscreen" id="greenscreen" on:click={setGreenScreen}
-                        >설정하기 <div id="greenscreen-color" /></button
-                    >
-                </p>
-            </div>
-            <button on:click={exportImage}>내보내기</button>
-        </div>
+        <ExportInput
+            bind:bgColor
+            bind:bgHex
+            bind:exportScale
+            bind:exportTransparentBG
+            bind:width
+            bind:data
+            service="twitter"
+            {exportImage}
+            {setGreenScreen}
+        />
     </div>
 </main>
 
@@ -482,22 +454,5 @@
         input {
             display: table-cell;
         }
-
-        button#greenscreen {
-            display: flex;
-            flex-direction: row;
-            align-items: baseline;
-        }
-        #greenscreen-color {
-            width: 12px;
-            height: 12px;
-            background-color: #00b140;
-        }
-    }
-
-    .btn {
-        all: unset;
-        cursor: pointer;
-        margin-left: 3px;
     }
 </style>

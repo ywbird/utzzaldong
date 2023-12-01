@@ -1,15 +1,15 @@
 <script lang="ts">
     export let data: {
-        nickname: string;
-        handle: string;
-        avatar: string;
-        content: string;
-        date: string;
-    };
-    import Icon from '$lib/icons';
-    import markdown from '$lib/markdown';
+        nickname: string
+        handle: string
+        avatar: string
+        content: string
+        date: string
+    }
+    import Icon from '$lib/icons'
+    import markdown from '$lib/markdown'
 
-    const date = new Date(data.date);
+    const date = new Date(data.date)
 </script>
 
 <div class="main">
@@ -25,7 +25,7 @@
                     {new Intl.DateTimeFormat('ko-KR', {
                         // year: none,
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
                     }).format(date)}
                 </div>
             </div>

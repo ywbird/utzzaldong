@@ -1,5 +1,5 @@
 <script>
-    export let size = 18;
+    export let size = 18
 </script>
 
 <svg style="width: {size};" viewBox="0 0 24 24" aria-hidden="true" class="icon"

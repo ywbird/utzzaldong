@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Icon from '$lib/icons';
+    import Icon from '$lib/icons'
 </script>
 
 <main>
@@ -43,7 +43,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 50px;
+            width: 60px;
             aspect-ratio: 1/1;
             padding: 0.3rem;
             border-radius: 12px;
