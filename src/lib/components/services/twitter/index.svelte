@@ -1,10 +1,10 @@
 <script lang="ts">
     import markdown from '$lib/markdown'
     import Icon from '$lib/icons'
-    import TwitterComment from '$lib/components/services/twitter/TwitterComment.svelte'
+    import TwitterComment from '$lib/components/services/twitter/twitterComment.svelte'
 
     import { colord } from 'colord'
-    import InfoPopup from '$lib/components/utils/InfoPopup.svelte'
+    import InfoPopup from '$lib/components/utils/infoPopup.svelte'
     import { exportAsImage } from '$lib/exporting'
     import { newAvatar, newName } from '$lib/utils'
     import ExportInput from '$lib/components/utils/ExportInput.svelte'
